@@ -65,23 +65,56 @@ export default class DrawingBoard extends Component {
     this._colWidth  = colWidth;
   }
 
+  paintOrEraseTile(event, mode) {
+    const [ roughX, roughY ] = getCursorPosition(event, this._canvas);
+
+    // Round down to the nearest X/Y cell.
+    // We add 1 so that it doesn't overlap the grid lines.
+    const roundedX = Math.floor(roughX / this._colWidth)  * this._colWidth;
+    const roundedY = Math.floor(roughY / this._rowHeight) * this._rowHeight;
+
+    // We want our tiles to be 1 pixel narrower/shorter than the width/height,
+    // so that they don't overlap the grid lines. We also need to offset
+    // their x/y coordinates by 1.
+    const width   = this._colWidth - 1;
+    const height  = this._rowHeight - 1;
+    const x       = roundedX + 1;
+    const y       = roundedY + 1;
+
+    if ( mode === 'paint' ) {
+      this._ctx.fillStyle = this.props.paintColor;
+      this._ctx.fillRect(x, y, width, height);
+    } else if ( mode === 'erase' ) {
+      this._ctx.clearRect(x, y, width, height);
+    }
+  }
+
   clickHandler(event) {
-    const { x, y } = getCursorPosition(event, this._canvas);
+    this.paintOrEraseTile(event, 'paint');
+  }
 
-    // Round down to the nearest X/Y cell
-    const roundedX = Math.floor(x / this._colWidth) * this._colWidth;
-    const roundedY = Math.floor(y / this._rowHeight) * this._rowHeight;
-
-    // Draw a cell at that location
-    this._ctx.fillStyle = this.props.paintColor;
-    this._ctx.fillRect(roundedX, roundedY, this._colWidth, this._rowHeight);
+  contextMenuHandler(event) {
+    // AKA. right click.
+    event.preventDefault();
+    this.paintOrEraseTile(event, 'erase');
   }
 
   moveHandler(event) {
-    if ( event.which === 1 || event.buttons === 1 ) {
-      this.clickHandler(event)
+    // Only trigger if a mouse button is held down.
+    const buttonHeld = event.which || event.buttons;
+
+    switch ( buttonHeld ) {
+      case 1:
+        this.paintOrEraseTile(event, 'paint');
+        break;
+      case 2:
+        this.paintOrEraseTile(event, 'erase')
+        break;
+      default:
+        return false;
     }
   }
+
 
   render() {
     return (
@@ -92,6 +125,7 @@ export default class DrawingBoard extends Component {
         height={this.props.height}
         onClick={::this.clickHandler}
         onMouseMove={::this.moveHandler}
+        onContextMenu={::this.contextMenuHandler}
       />
     );
   }

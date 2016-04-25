@@ -2,8 +2,6 @@ import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 import { DrawingBoard } from '../index.js';
 
-console.log(DrawingBoard);
-
 storiesOf('DrawingBoard', module)
   .add('default view', () => (
     <DrawingBoard />
@@ -14,8 +12,11 @@ storiesOf('DrawingBoard', module)
   .add('with red background', () => (
     <DrawingBoard canvasBgColor="#FF0000" />
   ))
-  .add('with blue grid lines', () => (
-    <DrawingBoard gridLineColor="#0000FF" />
+  .add('with offwhite grid lines', () => (
+    <DrawingBoard gridLineColor="#EEEEEE" />
+  ))
+  .add('with green paint', () => (
+    <DrawingBoard paintColor="#00FF00" />
   ))
   .add('tiny', () => (
     <DrawingBoard width={400} height={300} />

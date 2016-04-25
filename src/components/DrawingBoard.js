@@ -14,7 +14,7 @@ export default class DrawingBoard extends Component {
     cols: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    onClick: PropTypes.func,
+    onPaint: PropTypes.func,
     canvasBgColor: PropTypes.string,
     gridLineColor: PropTypes.string,
     paintColor: PropTypes.string,
@@ -28,7 +28,8 @@ export default class DrawingBoard extends Component {
     height: 400,
     paintColor: '#000000',
     gridLineColor: '#000000',
-    style: {}
+    style: {},
+    onPaint(){ /* no-op */}
   }
 
   constructor(props) {
@@ -40,9 +41,9 @@ export default class DrawingBoard extends Component {
     // takes 16ms to construct, and uses a couple MB of ram (far less than
     // React itself).
     this.cells = [];
-    for ( let y = 0; y < 16; y++ ) {
+    for ( let x = 0; x < 32; x++ ) {
       let row = [];
-      for ( let x = 0; x < 32; x++ ) {
+      for ( let y = 0; y < 16; y++ ) {
         row.push(null);
       }
       this.cells.push(row);
@@ -114,6 +115,7 @@ export default class DrawingBoard extends Component {
       this.cells[cellX][cellY] = this.props.paintColor;
       this._ctx.fillStyle = this.props.paintColor;
       this._ctx.fillRect(x, y, width, height);
+      this.props.onPaint(cellX, cellY, this.props.paintColor);
     } else if ( mode === 'erase' ) {
       this.cells[cellX][cellY] = null;
       this._ctx.clearRect(x, y, width, height);

@@ -1,21 +1,25 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
-import Button from '../index';
+import { DrawingBoard } from '../index.js';
 
-storiesOf('Button', module)
+console.log(DrawingBoard);
+
+storiesOf('DrawingBoard', module)
   .add('default view', () => (
-    <Button onClick={ action('button clicked') }>Hello</Button>
+    <DrawingBoard />
   ))
-  .add('some emojies as the text', () => (
-    <Button>😀 😎 👍 💯</Button>
+  .add('with border', () => (
+    <DrawingBoard style={{border: '1px solid #000'}} />
   ))
-  .add('custom styles', () => {
-    const style = {
-      fontSize: 20,
-      textTransform: 'uppercase',
-      color: '#FF8833',
-    };
-    return (
-      <Button style={ style }>Hello</Button>
-    );
-  });
+  .add('with red background', () => (
+    <DrawingBoard canvasBgColor="#FF0000" />
+  ))
+  .add('with blue grid lines', () => (
+    <DrawingBoard gridLineColor="#0000FF" />
+  ))
+  .add('tiny', () => (
+    <DrawingBoard width={400} height={300} />
+  ))
+  .add('invalid props', () => (
+    <DrawingBoard width="1000" />
+  ));

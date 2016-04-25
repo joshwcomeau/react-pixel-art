@@ -26,3 +26,22 @@ export function getCursorPosition(event, canvas) {
   var y = event.clientY - rect.top;
   return [ x, y ];
 }
+
+export function matchCursorPosToCell({ cursorX, cursorY, colWidth, rowHeight }) {
+  const x = Math.floor(cursorX / colWidth)  * colWidth;
+  const y = Math.floor(cursorY / rowHeight) * rowHeight;
+
+  return [ x, y ];
+}
+
+export function getCellBoundingBox(event, { x, y, colWidth, rowHeight }) {
+  // We want our tiles to be 1 pixel narrower/shorter than the width/height,
+  // so that they don't overlap the grid lines. We also need to offset
+  // their x/y coordinates by 1.
+  return {
+    width:    colWidth  - 1,
+    height:   rowHeight - 1,
+    x:        x + 1,
+    y:        y + 1
+  };
+}

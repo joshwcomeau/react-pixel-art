@@ -1,6 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 
-import { scaleCanvas, getCursorPosition } from '../utils/canvas';
+import {
+  scaleCanvas,
+  getCursorPosition,
+  matchCursorPosToCell,
+  getCellBoundingBox
+} from '../utils/canvas';
 
 
 export default class DrawingBoard extends Component {
@@ -24,6 +29,24 @@ export default class DrawingBoard extends Component {
     paintColor: '#000000',
     gridLineColor: '#000000',
     style: {}
+  }
+
+  constructor(props) {
+    super(props);
+
+    // Create an array of all possible cells. They'll all start out with empty
+    // objects, that can be filled in (and reset) by painting/erasing.
+    // This may seem wasteful, but even with a large grid (256x256), this only
+    // takes 16ms to construct, and uses a couple MB of ram (far less than
+    // React itself).
+    this.cells = [];
+    for ( let y = 0; y < 16; y++ ) {
+      let row = [];
+      for ( let x = 0; x < 32; x++ ) {
+        row.push(null);
+      }
+      this.cells.push(row);
+    }
   }
 
   componentDidMount() {
@@ -65,26 +88,34 @@ export default class DrawingBoard extends Component {
     this._colWidth  = colWidth;
   }
 
+  highlightTile(event) {
+
+  }
+
   paintOrEraseTile(event, mode) {
-    const [ roughX, roughY ] = getCursorPosition(event, this._canvas);
+    const [ cursorX, cursorY ]    = getCursorPosition(event, this._canvas);
+    const [ roundedX, roundedY ]  = matchCursorPosToCell({
+      cursorX,
+      cursorY,
+      colWidth: this._colWidth,
+      rowHeight: this._rowHeight
+    });
+    const { x, y, width, height } = getCellBoundingBox(event, {
+      x: roundedX,
+      y: roundedY,
+      colWidth: this._colWidth,
+      rowHeight: this._rowHeight
+    });
 
-    // Round down to the nearest X/Y cell.
-    // We add 1 so that it doesn't overlap the grid lines.
-    const roundedX = Math.floor(roughX / this._colWidth)  * this._colWidth;
-    const roundedY = Math.floor(roughY / this._rowHeight) * this._rowHeight;
-
-    // We want our tiles to be 1 pixel narrower/shorter than the width/height,
-    // so that they don't overlap the grid lines. We also need to offset
-    // their x/y coordinates by 1.
-    const width   = this._colWidth - 1;
-    const height  = this._rowHeight - 1;
-    const x       = roundedX + 1;
-    const y       = roundedY + 1;
+    const cellX = roundedX / this._colWidth;
+    const cellY = roundedY / this._rowHeight;
 
     if ( mode === 'paint' ) {
+      this.cells[cellX][cellY] = this.props.paintColor;
       this._ctx.fillStyle = this.props.paintColor;
       this._ctx.fillRect(x, y, width, height);
     } else if ( mode === 'erase' ) {
+      this.cells[cellX][cellY] = null;
       this._ctx.clearRect(x, y, width, height);
     }
   }
@@ -100,7 +131,9 @@ export default class DrawingBoard extends Component {
   }
 
   moveHandler(event) {
-    // Only trigger if a mouse button is held down.
+    // Paint if left-click is held
+    // Erase if right-click is held
+    // Highlight if no button is held
     const buttonHeld = event.which || event.buttons;
 
     switch ( buttonHeld ) {
@@ -111,7 +144,7 @@ export default class DrawingBoard extends Component {
         this.paintOrEraseTile(event, 'erase')
         break;
       default:
-        return false;
+        this.highlightTile(event);
     }
   }
 

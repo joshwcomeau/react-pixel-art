@@ -29,7 +29,9 @@ export default class DrawingBoard extends Component {
     paintColor: '#000000',
     gridLineColor: '#000000',
     style: {},
-    onPaint(){ /* no-op */}
+    onPaint(){ /* no-op */},
+    onErase(){ /* no-op */},
+    onChange(){ /* no-op */}
   }
 
   constructor(props) {
@@ -111,15 +113,21 @@ export default class DrawingBoard extends Component {
     const cellX = roundedX / this._colWidth;
     const cellY = roundedY / this._rowHeight;
 
-    if ( mode === 'paint' ) {
+    // If this is a duplicate action (painting a tile that is already that
+    // color), we want to avoid actually doing anything.
+    const currentVal = this.cells[cellX][cellY]
+    if ( mode === 'paint' && currentVal !== this.props.paintColor ) {
       this.cells[cellX][cellY] = this.props.paintColor;
       this._ctx.fillStyle = this.props.paintColor;
       this._ctx.fillRect(x, y, width, height);
-      this.props.onPaint(cellX, cellY, this.props.paintColor);
-    } else if ( mode === 'erase' ) {
+      this.props.onPaint(this.cells);
+    } else if ( mode === 'erase' && !!currentVal ) {
       this.cells[cellX][cellY] = null;
       this._ctx.clearRect(x, y, width, height);
+      this.props.onErase(this.cells);
     }
+
+    this.props.onChange(this.cells);
   }
 
   clickHandler(event) {

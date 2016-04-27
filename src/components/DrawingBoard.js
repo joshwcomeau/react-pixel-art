@@ -8,6 +8,9 @@ import {
 } from '../utils/canvas';
 
 
+
+// TODO: Make declarative, dependent on props.
+
 export default class DrawingBoard extends Component {
   static propTypes = {
     rows: PropTypes.number.isRequired,
@@ -49,6 +52,22 @@ export default class DrawingBoard extends Component {
         row.push(null);
       }
       this.cells.push(row);
+    }
+  }
+
+  /**
+   * redraw() - our primary update method.
+   * Called on mount and when cells change (via props).
+   */
+  redraw() {
+    const { canvasBgColor, rows, cols, width, height } = this.props;
+
+    // Reset the canvas. Either by a clear, or by filling with the BG color
+    if ( canvasBgColor ) {
+      ctx.fillStyle = canvasBgColor;
+      ctx.fillRect(0, 0, width, height);
+    } else {
+      ctx.clearRect(0, 0, width, height);
     }
   }
 

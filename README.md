@@ -1,3 +1,3 @@
 # React Pixel Art Component
 
-React Pixel Art Component
+Currently under development! Come back soon.

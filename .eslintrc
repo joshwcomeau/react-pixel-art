@@ -4,6 +4,10 @@
     "arrow-body-style": 0,
     "prefer-arrow-callback": 0,
     "func-names": 0,
+    "comma-dangle": 0,
+    "key-spacing": 0,
+    "no-return-assign": 0,
+    "prefer-template": 0,
     "react/jsx-no-bind": 0,
     "react/jsx-uses-react": 1,
     "react/prefer-stateless-function": 0
@@ -11,6 +15,7 @@
   "parserOptions": {
     "ecmaVersion": 6,
     "ecmaFeatures": {
+      "classes": true,
       "experimentalObjectRestSpread": true
     }
   }

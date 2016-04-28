@@ -2,9 +2,15 @@ import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 import { DrawingBoard } from '../index.js';
 
+const cells = [
+  [ '#FF0000', '#FF0000', '#000000' ],
+  [ '#FF0000', '#000000', '#FF0000' ],
+  [ '#000000', '#FF0000', '#FF0000' ]
+];
+
 storiesOf('DrawingBoard', module)
   .add('default view', () => (
-    <DrawingBoard onPaint={action('paint')}/>
+    <DrawingBoard cells={cells} />
   ))
   .add('with border', () => (
     <DrawingBoard style={{border: '1px solid #000'}} onPaint={action('paint')}/>

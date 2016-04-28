@@ -1,3 +1,3 @@
-import DrawingBoard from './components/DrawingBoard'
+import DrawingBoard from './components/DrawingBoard';
 
-export { DrawingBoard }
+export { DrawingBoard };

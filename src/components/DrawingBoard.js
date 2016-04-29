@@ -22,17 +22,15 @@ export default class DrawingBoard extends Component {
   }
 
   componentDidMount() {
-    this.ctx = this._canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d');
 
-    scaleCanvas(this._canvas, this.ctx);
-
-    calculateCellSizing(this.props.cells, this.props.width, this.props.height);
+    scaleCanvas(this.canvas, this.ctx);
 
     this.redraw();
   }
 
-  componentWillReceiveProps(nextProps) {
-    calculateCellSizing(nextProps.cells, nextProps.width, nextProps.height);
+  componentDidUpdate() {
+    this.redraw();
   }
 
   /**
@@ -45,8 +43,8 @@ export default class DrawingBoard extends Component {
     rowCells.forEach((cell, colIndex) => {
       // `cell` can either be null if it's a 'clear' cell, or a color value if
       // it's filled. Either way, we need to paint something.
-      const x = this.colWidth * colIndex;
-      const y = this.rowHeight * rowIndex;
+      const x = this.rowHeight * rowIndex;
+      const y = this.colWidth * colIndex;
 
       if (cell) {
         this.ctx.fillStyle = cell;
@@ -54,6 +52,7 @@ export default class DrawingBoard extends Component {
       } else {
         this.ctx.lineWidth = this.props.gridLineWidth;
         this.ctx.strokeStyle = this.props.gridLineColor;
+        this.ctx.strokeRect(x, y, this.colWidth, this.rowHeight);
       }
     });
   }
@@ -64,6 +63,8 @@ export default class DrawingBoard extends Component {
    */
   redraw() {
     const { canvasBgColor, width, height } = this.props;
+
+    [this.rowHeight, this.colWidth] = calculateCellSizing(this.props);
 
     // Reset the canvas. Either by a clear, or by filling with the BG color
     if (canvasBgColor) {
@@ -79,22 +80,15 @@ export default class DrawingBoard extends Component {
   }
 
   handleMouseEvent(event, eventType) {
-    const [cursorX, cursorY] = getCursorPosition(event, this._canvas);
+    const [cursorX, cursorY] = getCursorPosition(event, this.canvas);
     const [x, y] = matchCursorPosToCell({
       cursorX,
       cursorY,
-      colWidth: this._colWidth,
-      rowHeight: this._rowHeight
+      colWidth: this.colWidth,
+      rowHeight: this.rowHeight
     });
-    // const { x, y, width, height } = getCellBoundingBox(event, {
-    //   x: roundedX,
-    //   y: roundedY,
-    //   colWidth: this._colWidth,
-    //   rowHeight: this._rowHeight
-    // });
-    //
-    // const cellX = roundedX / this._colWidth;
-    // const cellY = roundedY / this._rowHeight;
+    // const cellX = roundedX / this.colWidth;
+    // const cellY = roundedY / this.rowHeight;
 
     this.props.onChange({ x, y }, eventType);
 
@@ -149,7 +143,7 @@ export default class DrawingBoard extends Component {
   render() {
     return (
       <canvas
-        ref={ c => this._canvas = c }
+        ref={ c => this.canvas = c }
         style={this.props.style}
         width={this.props.width}
         height={this.props.height}
@@ -173,10 +167,8 @@ DrawingBoard.propTypes = {
 };
 
 DrawingBoard.defaultProps = {
-  rows: 16,
-  cols: 32,
-  width: 800,
-  height: 400,
+  width: 500,
+  height: 500,
   gridLineColor: '#000000',
   gridLineWidth: 1,
   style: {},

@@ -30,8 +30,8 @@ export function getCursorPosition(event, canvas) {
 }
 
 export function matchCursorPosToCell({ cursorX, cursorY, colWidth, rowHeight }) {
-  const x = Math.floor(cursorX / colWidth) * colWidth;
-  const y = Math.floor(cursorY / rowHeight) * rowHeight;
+  const x = Math.floor(cursorX / colWidth);
+  const y = Math.floor(cursorY / rowHeight);
 
   return [x, y];
 }
@@ -55,7 +55,7 @@ export function getCellBoundingBox(event, { x, y, colWidth, rowHeight }) {
  * @param {number} width - the total width of the board
  * @param {number} height - the total height of the board
  */
-export function calculateCellSizing(cells, width, height) {
+export function calculateCellSizing({ cells, width, height }) {
   const firstRow = cells[0];
 
   // If we've supplied a 1D array, we need to throw an error.
@@ -71,6 +71,8 @@ export function calculateCellSizing(cells, width, height) {
   const numOfRows = cells.length;
   const numOfCols = firstRow && firstRow.length;
 
-  this.rowHeight = height / numOfRows;
-  this.colWidth = width / numOfCols;
+  const rowHeight = height / numOfRows;
+  const colWidth = width / numOfCols;
+
+  return [rowHeight, colWidth];
 }

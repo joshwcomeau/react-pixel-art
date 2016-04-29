@@ -43,8 +43,8 @@ export default class DrawingBoard extends Component {
     rowCells.forEach((cell, colIndex) => {
       // `cell` can either be null if it's a 'clear' cell, or a color value if
       // it's filled. Either way, we need to paint something.
-      const x = this.rowHeight * rowIndex;
-      const y = this.colWidth * colIndex;
+      const x = this.colWidth * colIndex;
+      const y = this.rowHeight * rowIndex;
 
       if (cell) {
         this.ctx.fillStyle = cell;
@@ -87,8 +87,6 @@ export default class DrawingBoard extends Component {
       colWidth: this.colWidth,
       rowHeight: this.rowHeight
     });
-    // const cellX = roundedX / this.colWidth;
-    // const cellY = roundedY / this.rowHeight;
 
     this.props.onChange({ x, y }, eventType);
 
@@ -167,8 +165,8 @@ DrawingBoard.propTypes = {
 };
 
 DrawingBoard.defaultProps = {
-  width: 500,
-  height: 500,
+  width: 640,
+  height: 320,
   gridLineColor: '#000000',
   gridLineWidth: 1,
   style: {},

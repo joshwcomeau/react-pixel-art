@@ -1,5 +1,5 @@
-export function generateGrid(cols, rows) {
-  return Array(rows).fill(null).map(() => Array(cols).fill(null));
+if (!Array.isArray) {
+  Array.isArray = arg => Object.prototype.toString.call(arg) === '[object Array]';
 }
 
 if (!Array.prototype.fill) {

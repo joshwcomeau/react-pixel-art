@@ -1,3 +1,7 @@
+import './utils/polyfills';
+
 import DrawingBoard from './components/DrawingBoard';
 
-export { DrawingBoard };
+import { generateGrid, modifyCell } from './utils/general'
+
+export { DrawingBoard, generateGrid, modifyCell };

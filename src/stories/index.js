@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 import { DrawingBoard } from '../index.js';
+import { generateGrid } from '../utils/general'
 
-const cells = [
-  [ '#FF0000', '#FF0000', '#000000' ],
-  [ '#FF0000', '#000000', '#FF0000' ],
-  [ '#000000', '#FF0000', '#FF0000' ]
-];
+const cells = generateGrid(32, 16);
 
 storiesOf('DrawingBoard', module)
   .add('default view', () => (
@@ -43,7 +40,7 @@ class Controller extends Component {
   clickCell({x, y}, eventType) {
     if (eventType === 'hover') return
     const newCells = this.state.cells.slice();
-    newCells[x][y] = eventType === 'left-click' ? '#FF0000' : null;
+    newCells[y][x] = eventType === 'left-click' ? '#FF0000' : null;
 
     this.setState({
       cells: newCells
